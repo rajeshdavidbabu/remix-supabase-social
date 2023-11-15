@@ -3,6 +3,8 @@ import { Link } from "@remix-run/react";
 import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import ReactMarkdown from "react-markdown";
+import { Button } from "./ui/button";
+import { DialogTrigger } from "./ui/dialog";
 
 export type PostProps = {
   avatarUrl: string;
@@ -80,6 +82,9 @@ export function Post({
           </div>
           <div className="flex mt-6 justify-between items-center">
             <div className="flex space-x-4 text-gray-400">{children}</div>
+            <Link to="/gitposts/12345" preventScrollReset={true}>
+              Post Open
+            </Link>
             <div className="text-gray-400 text-sm">{dateTimeString}</div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
 import {
+  Outlet,
   useLoaderData,
   useNavigation,
   useOutletContext,
@@ -102,6 +103,7 @@ export default function GitPosts() {
 
   return (
     <div className="flex flex-col w-full max-w-xl px-4">
+      <Outlet />
       <WritePost sessionUserId={sessionUserId} />
       <Separator />
       <PostSearch searchQuery={query} isSearching={isSearching} />

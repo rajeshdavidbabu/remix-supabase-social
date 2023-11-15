@@ -49,7 +49,13 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <Outlet context={{ supabase }} />
         </QueryClientProvider>
-        <ScrollRestoration />
+        <ScrollRestoration
+          getKey={(location, matches) => {
+            console.log("The location key ", location, location.key, matches);
+            // default behavior
+            return location.key;
+          }}
+        />
         <Scripts />
         <LiveReload />
       </body>
