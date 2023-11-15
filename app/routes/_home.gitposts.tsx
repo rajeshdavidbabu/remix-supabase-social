@@ -1,0 +1,118 @@
+import { redirect } from "@remix-run/node";
+import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import {
+  useLoaderData,
+  useNavigation,
+  useOutletContext,
+  useRevalidator,
+} from "@remix-run/react";
+import { WritePost } from "./gitposts.post";
+import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
+import {
+  type SupabaseOutletContext,
+  getRealTimeSubscription,
+} from "~/lib/supabase";
+import { useEffect } from "react";
+import { Separator } from "~/components/ui/separator";
+import { PostSearch } from "~/components/post-search";
+import { getAllPostsWithProfilesAndLikes } from "~/lib/database.server";
+import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
+import { PostList } from "~/components/post-list";
+import { LoadMore } from "~/components/load-more";
+
+export let loader = async ({ request }: LoaderFunctionArgs) => {
+  const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
+    request,
+  });
+
+  if (!session) {
+    return redirect("/login", { headers });
+  }
+
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
+  const query = searchParams.get("query");
+  const page = Number(searchParams.get("page")) || 1;
+
+  const { data, totalPages, limit } = await getAllPostsWithProfilesAndLikes({
+    dbClient: supabase,
+    query,
+    page: isNaN(page) ? 1 : page,
+  });
+
+  const {
+    userId: sessionUserId,
+    userAvatarUrl,
+    userName,
+  } = getUserDataFromSession(session);
+
+  const posts = combinePostsWithLikes(data, sessionUserId);
+
+  return json(
+    {
+      posts,
+      userDetails: { sessionUserId, userAvatarUrl, userName },
+      query,
+      totalPages,
+      limit,
+    },
+    { headers }
+  );
+};
+
+export default function GitPosts() {
+  const {
+    posts,
+    userDetails: { sessionUserId },
+    query,
+    totalPages,
+    limit,
+  } = useLoaderData<typeof loader>();
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
+  const revalidator = useRevalidator();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const subscriptionCallback = () => {
+      if (revalidator.state === "idle") {
+        revalidator.revalidate();
+      }
+    };
+
+    const subscription = getRealTimeSubscription(
+      supabase,
+      subscriptionCallback
+    );
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [revalidator, supabase]);
+
+  // When nothing is happening, navigation.location will be undefined,
+  // but when the user navigates it will be populated with the next
+  // location while data loads. Then we check if they're searching with
+  // location.search.
+  const isSearching = Boolean(
+    navigation.location &&
+      new URLSearchParams(navigation.location.search).has("query")
+  );
+
+  const showLoadMore = posts.length >= limit;
+
+  return (
+    <div className="flex flex-col w-full max-w-xl px-4">
+      <WritePost sessionUserId={sessionUserId} />
+      <Separator />
+      <PostSearch searchQuery={query} isSearching={isSearching} />
+      <PostList sessionUserId={sessionUserId} posts={posts} />
+      {showLoadMore && (
+        <LoadMore
+          sessionUserId={sessionUserId}
+          totalPages={totalPages}
+          isSearching={isSearching}
+        />
+      )}
+    </div>
+  );
+}
