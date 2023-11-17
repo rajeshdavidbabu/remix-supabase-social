@@ -2,36 +2,73 @@ import { json, redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
+import { Post } from "~/components/post";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
 } from "~/components/ui/dialog";
+import { Textarea } from "~/components/ui/textarea";
+import { ViewComments } from "~/components/view-comments";
+import { getPostWithDetailsById } from "~/lib/database.server";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
+import {
+  combinePostsWithLikes,
+  formatToTwitterDate,
+  getUserDataFromSession,
+} from "~/lib/utils";
+import { Like } from "./gitposts.like";
+import ReactMarkdown from "react-markdown";
+import { Separator } from "~/components/ui/separator";
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { postId } = params;
-  const { headers, session } = await getSupabaseWithSessionHeaders({
+  const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
     request,
   });
+
+  await delay(3000);
 
   if (!session) {
     return redirect("/login", { headers });
   }
 
+  if (!postId) {
+    return redirect("/404", { headers });
+  }
+
+  const { data } = await getPostWithDetailsById({
+    dbClient: supabase,
+    postId,
+  });
+
+  const { userId: sessionUserId } = getUserDataFromSession(session);
+
+  const posts = combinePostsWithLikes(data, sessionUserId);
+
   return json(
     {
-      postId,
+      post: posts[0],
+      sessionUserId,
     },
     { headers }
   );
 };
 
 export default function Profile() {
-  const { postId } = useLoaderData<typeof loader>();
+  const { post, sessionUserId } = useLoaderData<typeof loader>();
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
 
@@ -43,11 +80,51 @@ export default function Profile() {
         setOpen(open);
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>{postId}</DialogTitle>
           <DialogDescription>
-            I am going to show the post information here. With a lot of comments
+            <Post
+              avatarUrl={post.author.avatar_url}
+              id={post.id}
+              name={post.author.name}
+              username={post.author.username}
+              dateTimeString={formatToTwitterDate(post.created_at)}
+              title={post.title}
+              userId={post.user_id}
+              key={post.id}
+            >
+              <div className="flex items-center justify-between w-24 md:w-32">
+                <div className="flex items-center w-1/2">
+                  <Like
+                    likedByUser={post.isLikedByUser}
+                    likes={post.likes}
+                    sessionUserId={sessionUserId}
+                    postId={post.id}
+                    readonly={true}
+                  />
+                </div>
+                <div className="flex items-center w-1/2">
+                  <ViewComments
+                    number={post.comments.length}
+                    pathname={`/gitposts/${post.id}`}
+                    readonly={true}
+                  />
+                </div>
+              </div>
+            </Post>
+            {post.comments.length ? (
+              <Card className="my-2 min-h-24 max-h-48 overflow-y-scroll p-4">
+                <CardTitle>Comments</CardTitle>
+                {post.comments.map((comment, index) => (
+                  <div key={index} className="text-sm prose p-4">
+                    <ReactMarkdown>{comment.title}</ReactMarkdown>
+                  </div>
+                ))}
+              </Card>
+            ) : (
+              <></>
+            )}
+            <Textarea></Textarea>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

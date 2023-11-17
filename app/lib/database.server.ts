@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "database.types";
 
-export async function getAllPostsWithProfilesAndLikes({
+export async function getAllPostsWithDetails({
   dbClient,
   query,
   page, // Default to page 1
@@ -14,7 +14,9 @@ export async function getAllPostsWithProfilesAndLikes({
 }) {
   let postsQuery = dbClient
     .from("posts")
-    .select("*, author: profiles(*), likes(user_id)", { count: "exact" })
+    .select("*, author: profiles(*), likes(user_id), comments(*)", {
+      count: "exact",
+    })
     .order("created_at", { ascending: false })
     .range((page - 1) * limit, page * limit - 1);
 
@@ -25,10 +27,7 @@ export async function getAllPostsWithProfilesAndLikes({
   const { data, error, count } = await postsQuery;
 
   if (error) {
-    console.log(
-      "Error occured during getAllPostsWithProfilesAndLikes : ",
-      error
-    );
+    console.log("Error occured during getAllPostsWithDetails : ", error);
   }
 
   return {
@@ -36,6 +35,28 @@ export async function getAllPostsWithProfilesAndLikes({
     error,
     totalPages: count ? Math.ceil(count / limit) : 1,
     limit,
+  };
+}
+
+export async function getPostWithDetailsById({
+  dbClient,
+  postId,
+}: {
+  dbClient: SupabaseClient<Database>;
+  postId: string;
+}) {
+  const { data, error } = await dbClient
+    .from("posts")
+    .select("*, author: profiles(*), likes(user_id), comments(*)")
+    .eq("id", postId); // Filter by the specific post ID
+
+  if (error) {
+    console.error("Error occurred during getPostWithDetailsById: ", error);
+  }
+
+  return {
+    data,
+    error,
   };
 }
 

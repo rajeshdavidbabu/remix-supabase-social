@@ -1,6 +1,6 @@
 import type { SupabaseOutletContext } from "~/lib/supabase";
 import { Button } from "./ui/button";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Github } from "lucide-react";
 import { useOutletContext } from "@remix-run/react";
 
 export function Login() {
@@ -20,7 +20,7 @@ export function Login() {
 
   return (
     <Button onClick={handleSignIn}>
-      <GitHubLogoIcon className="mr-2 h-4 w-4" />
+      <Github className="mr-2 h-4 w-4" />
       Login with Github
     </Button>
   );

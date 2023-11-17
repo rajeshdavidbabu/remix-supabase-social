@@ -5,11 +5,13 @@ import type { Database } from "database.types";
 
 type Post = Database["public"]["Tables"]["posts"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type Comment = Database["public"]["Tables"]["comments"]["Row"];
 
 // Combine types to create PostWithAuthorAndLikes
-export type PostWithAuthorAndLikes = Post & {
+export type PostWithDetails = Post & {
   author: Profile | null;
   likes: { user_id: string }[];
+  comments: Comment[];
 };
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,7 +31,7 @@ export type CombinedPostsWithAuthorAndLikes = ReturnType<
 >;
 
 export function combinePostsWithLikes(
-  data: PostWithAuthorAndLikes[] | null,
+  data: PostWithDetails[] | null,
   sessionUserId: string
 ) {
   const posts =
@@ -40,6 +42,7 @@ export function combinePostsWithLikes(
           (like) => like.user_id === sessionUserId
         ),
         likes: post.likes.length,
+        comments: post.comments,
         author: post.author!, // cannot be null
       };
     }) ?? [];

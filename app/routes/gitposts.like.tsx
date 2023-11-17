@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { Form } from "@remix-run/react";
+import { Star } from "lucide-react";
 
 export async function action({ request }: ActionFunctionArgs) {
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
@@ -55,9 +56,16 @@ type LikeProps = {
   likes: number;
   postId: string;
   sessionUserId: string;
+  readonly?: boolean;
 };
 
-export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
+export function Like({
+  likedByUser,
+  likes,
+  postId,
+  sessionUserId,
+  readonly,
+}: LikeProps) {
   const { toast } = useToast();
   const [optimisticLikes, setOptimisticLikes] = useState(likes);
   const [optimisticLikedByUser, setOptimisticLikedByUser] =
@@ -88,10 +96,12 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
 
     return response.json();
   };
+  const [isLiking, setIsLiking] = useState(false);
 
   const mutation = useMutation({
     mutationFn: likeUnlikeAction,
     onMutate: async (variables) => {
+      setIsLiking(true); // Start action
       const action = variables.get("action");
 
       // Optimistically update the UI
@@ -130,6 +140,9 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
             title: "Oops",
             description: error.message,
           });
+        })
+        .finally(() => {
+          setIsLiking(false); // End action
         });
     },
   });
@@ -140,6 +153,7 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
 
     mutation.mutate(formData);
   };
+  const isDisabled = readonly || isLiking;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -150,30 +164,28 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
         name="action"
         value={optimisticLikedByUser ? "unlike" : "like"}
       />
-      <button
-        className={`group flex items-center`}
-        disabled={mutation.isPending}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`group-hover:fill-blue-300 group-hover:stroke-blue-300 ${
-            optimisticLikedByUser
-              ? "fill-blue-600 stroke-blue-600"
-              : "fill-none stroke-gray-500"
-          }`}
-        >
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
+      <button className={`group flex items-center`} disabled={isDisabled}>
+        {optimisticLikedByUser ? (
+          <Star
+            className={`w-4 h-4 fill-current ${
+              isDisabled
+                ? "text-gray-500"
+                : "text-blue-700 group-hover:text-blue-400"
+            }`}
+          />
+        ) : (
+          <Star
+            className={`w-4 h-4 fill-current ${
+              isDisabled
+                ? "text-gray-500"
+                : "text-gray-500 group-hover:text-blue-400"
+            }`}
+          />
+        )}
         <span
-          className={`ml-2 text-sm group-hover:text-blue-600 ${
-            optimisticLikedByUser ? "text-blue-600" : "text-gray-500"
-          }`}
+          className={`ml-2 text-sm ${
+            isDisabled ? "text-gray-500" : "group-hover:text-blue-400 "
+          }${optimisticLikedByUser ? "text-blue-700" : "text-gray-500"}`}
         >
           {optimisticLikes}
         </span>

@@ -1,10 +1,8 @@
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Github } from "lucide-react";
 import { Link } from "@remix-run/react";
 import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import ReactMarkdown from "react-markdown";
-import { Button } from "./ui/button";
-import { DialogTrigger } from "./ui/dialog";
 
 export type PostProps = {
   avatarUrl: string;
@@ -48,7 +46,7 @@ export function Post({
         <div className="md:flex-shrink-0">
           <span className="object-cover md:w-48 rounded-md bg-muted" />
         </div>
-        <div className="p-8 w-full">
+        <div className="p-4 md:p-8 w-full">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
@@ -75,16 +73,13 @@ export function Post({
                 </div>
               </div>
             </div>
-            <GitHubLogoIcon className="mr-1 h-8 w-8" />
+            <Github className="mr-1 h-8 w-8" />
           </div>
           <div className="mt-4 text-gray-500 text-sm prose">
             <ReactMarkdown>{title}</ReactMarkdown>
           </div>
           <div className="flex mt-6 justify-between items-center">
             <div className="flex space-x-4 text-gray-400">{children}</div>
-            <Link to="/gitposts/12345" preventScrollReset={true}>
-              Post Open
-            </Link>
             <div className="text-gray-400 text-sm">{dateTimeString}</div>
           </div>
         </div>

@@ -16,7 +16,7 @@ import {
 import { useEffect } from "react";
 import { Separator } from "~/components/ui/separator";
 import { PostSearch } from "~/components/post-search";
-import { getAllPostsWithProfilesAndLikes } from "~/lib/database.server";
+import { getAllPostsWithDetails } from "~/lib/database.server";
 import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
 import { PostList } from "~/components/post-list";
 import { LoadMore } from "~/components/load-more";
@@ -35,7 +35,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   const query = searchParams.get("query");
   const page = Number(searchParams.get("page")) || 1;
 
-  const { data, totalPages, limit } = await getAllPostsWithProfilesAndLikes({
+  const { data, totalPages, limit } = await getAllPostsWithDetails({
     dbClient: supabase,
     query,
     page: isNaN(page) ? 1 : page,
