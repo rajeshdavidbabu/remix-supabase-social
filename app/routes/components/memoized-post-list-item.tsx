@@ -1,8 +1,8 @@
 import { memo } from "react";
 import type { CombinedPostWithAuthorAndLikes } from "~/lib/utils";
 import { formatToTwitterDate } from "~/lib/utils";
-import { Like } from "~/routes/gitposts.like";
-import { Post } from "../post";
+import { Like } from "~/routes/gitposts+/like";
+import { Post } from "../../components/post";
 import { ViewComments } from "./view-comments";
 
 export const MemoizedPostListItem = memo(

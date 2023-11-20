@@ -1,5 +1,5 @@
 import { redirect, type LoaderFunctionArgs, json } from "@remix-run/node";
-import { Login as GithubLogin } from "~/components/stateful/login";
+import { Login as GithubLogin } from "~/routes/components/login";
 import { Card, CardContent } from "~/components/ui/card";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";

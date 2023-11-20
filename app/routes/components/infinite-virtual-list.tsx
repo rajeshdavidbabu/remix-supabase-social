@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { type CombinedPostsWithAuthorAndLikes } from "~/lib/utils";
 import { useFetcher, useLocation } from "@remix-run/react";
-import type { loader } from "~/routes/_home.gitposts";
+import type { loader } from "~/routes/_home+/gitposts";
 
-import { PostSkeleton } from "../post";
+import { PostSkeleton } from "../../components/post";
 import { Virtuoso, LogLevel } from "react-virtuoso";
 import { MemoizedPostListItem } from "./memoized-post-list-item";
 

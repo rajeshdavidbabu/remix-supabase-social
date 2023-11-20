@@ -1,5 +1,5 @@
 import type { SupabaseOutletContext } from "~/lib/supabase";
-import { Button } from "../ui/button";
+import { Button } from "../../components/ui/button";
 import { Github } from "lucide-react";
 import { useOutletContext } from "@remix-run/react";
 
@@ -10,7 +10,7 @@ export function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `http://localhost:3000/auth/callback`,
+        redirectTo: `http://localhost:3000/login/callback`,
       },
     });
     if (error) {

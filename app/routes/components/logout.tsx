@@ -1,5 +1,5 @@
 import { useOutletContext } from "@remix-run/react";
-import { Button } from "../ui/button";
+import { Button } from "../../components/ui/button";
 import type { SupabaseOutletContext } from "~/lib/supabase";
 
 export function Logout() {

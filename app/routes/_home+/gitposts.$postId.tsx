@@ -11,7 +11,7 @@ import {
   DialogHeader,
 } from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
-import { ViewComments } from "~/components/stateful/view-comments";
+import { ViewComments } from "~/routes/components/view-comments";
 import { getPostWithDetailsById } from "~/lib/database.server";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
@@ -20,7 +20,7 @@ import {
   formatToTwitterDate,
   getUserDataFromSession,
 } from "~/lib/utils";
-import { Like } from "./gitposts.like";
+import { Like } from "~/routes/gitposts+/like";
 import ReactMarkdown from "react-markdown";
 
 function delay(ms: number) {
