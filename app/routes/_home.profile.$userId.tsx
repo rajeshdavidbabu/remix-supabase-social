@@ -2,8 +2,7 @@ import { json, redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
-import { LoadMore } from "~/components/load-more";
-import { PostList } from "~/components/post-list";
+import { InfiniteVirtualList } from "~/components/infinite-virtual-list";
 
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Separator } from "~/components/ui/separator";
@@ -70,11 +69,8 @@ export default function Profile() {
     profile: { avatar_url, name, username },
     sessionUserId,
     posts,
-    limit,
     totalPages,
   } = useLoaderData<typeof loader>();
-
-  const showLoadMore = posts.length >= limit;
 
   return (
     <div className="flex flex-col w-full max-w-xl px-4">
@@ -92,14 +88,12 @@ export default function Profile() {
       <br />
       <h2 className="text-xl font-heading font-semibold">{"User posts"}</h2>
       <br />
-      <PostList posts={posts} sessionUserId={sessionUserId} />
-      {showLoadMore && (
-        <LoadMore
-          sessionUserId={sessionUserId}
-          totalPages={totalPages}
-          isSearching={false}
-        />
-      )}
+      <InfiniteVirtualList
+        posts={posts}
+        sessionUserId={sessionUserId}
+        totalPages={totalPages}
+        isSearching={false}
+      />
     </div>
   );
 }

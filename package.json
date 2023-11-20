@@ -33,6 +33,7 @@
     "react-infinite-scroller": "^1.2.6",
     "react-intersection-observer": "^9.5.3",
     "react-markdown": "^9.0.0",
+    "react-virtuoso": "^4.6.2",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7"
   },

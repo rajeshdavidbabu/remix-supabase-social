@@ -19,7 +19,7 @@ import { PostSearch } from "~/components/post-search";
 import { getAllPostsWithDetails } from "~/lib/database.server";
 import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
 import { PostList } from "~/components/post-list";
-import { LoadMore } from "~/components/load-more";
+import { InfiniteVirtualList } from "~/components/infinite-virtual-list";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
@@ -67,7 +67,6 @@ export default function GitPosts() {
     userDetails: { sessionUserId },
     query,
     totalPages,
-    limit,
   } = useLoaderData<typeof loader>();
   const { supabase } = useOutletContext<SupabaseOutletContext>();
   const revalidator = useRevalidator();
@@ -99,22 +98,17 @@ export default function GitPosts() {
       new URLSearchParams(navigation.location.search).has("query")
   );
 
-  const showLoadMore = posts.length >= limit;
-
   return (
     <div className="flex flex-col w-full max-w-xl px-4">
       <Outlet />
       <WritePost sessionUserId={sessionUserId} />
       <Separator />
       <PostSearch searchQuery={query} isSearching={isSearching} />
-      <PostList sessionUserId={sessionUserId} posts={posts} />
-      {showLoadMore && (
-        <LoadMore
-          sessionUserId={sessionUserId}
-          totalPages={totalPages}
-          isSearching={isSearching}
-        />
-      )}
+      <InfiniteVirtualList
+        sessionUserId={sessionUserId}
+        posts={posts}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

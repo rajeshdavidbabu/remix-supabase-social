@@ -34,6 +34,7 @@ export async function getAllPostsWithDetails({
     data,
     error,
     totalPages: count ? Math.ceil(count / limit) : 1,
+    totalPosts: count,
     limit,
   };
 }
