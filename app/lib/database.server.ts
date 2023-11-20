@@ -80,7 +80,9 @@ export async function getPostsForUser({
 
   let postsQuery = dbClient
     .from("posts")
-    .select("*, author: profiles(*), likes(user_id)", { count: "exact" })
+    .select("*, author: profiles(*), likes(user_id), comments(*)", {
+      count: "exact",
+    })
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .range((page - 1) * limit, page * limit - 1);

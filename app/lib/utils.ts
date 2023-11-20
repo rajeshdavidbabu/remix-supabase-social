@@ -30,6 +30,9 @@ export type CombinedPostsWithAuthorAndLikes = ReturnType<
   typeof combinePostsWithLikes
 >;
 
+export type CombinedPostWithAuthorAndLikes =
+  CombinedPostsWithAuthorAndLikes[number];
+
 export function combinePostsWithLikes(
   data: PostWithDetails[] | null,
   sessionUserId: string

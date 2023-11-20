@@ -15,11 +15,12 @@ import {
 } from "~/lib/supabase";
 import { useEffect } from "react";
 import { Separator } from "~/components/ui/separator";
-import { PostSearch } from "~/components/post-search";
+import { PostSearch } from "~/components/stateful/post-search";
 import { getAllPostsWithDetails } from "~/lib/database.server";
 import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
-import { PostList } from "~/components/post-list";
-import { InfiniteVirtualList } from "~/components/infinite-virtual-list";
+import { ChevronTop } from "lucide-react";
+import { InfiniteVirtualList } from "~/components/stateful/infinite-virtual-list";
+import { Button } from "~/components/ui/button";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
@@ -99,7 +100,7 @@ export default function GitPosts() {
   );
 
   return (
-    <div className="flex flex-col w-full max-w-xl px-4">
+    <div className="w-full max-w-xl px-4 flex flex-col">
       <Outlet />
       <WritePost sessionUserId={sessionUserId} />
       <Separator />

@@ -1,5 +1,5 @@
 import type { SupabaseOutletContext } from "~/lib/supabase";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Github } from "lucide-react";
 import { useOutletContext } from "@remix-run/react";
 

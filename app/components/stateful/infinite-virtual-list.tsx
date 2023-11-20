@@ -1,15 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { PostList } from "./post-list";
-import {
-  formatToTwitterDate,
-  type CombinedPostsWithAuthorAndLikes,
-} from "~/lib/utils";
+import { useEffect, useState } from "react";
+import { type CombinedPostsWithAuthorAndLikes } from "~/lib/utils";
 import { useFetcher, useLocation } from "@remix-run/react";
 import type { loader } from "~/routes/_home.gitposts";
-import { Post, PostSkeleton } from "./post";
-import { Virtuoso } from "react-virtuoso";
-import { Like } from "~/routes/gitposts.like";
-import { ViewComments } from "./view-comments";
+
+import { PostSkeleton } from "../post";
+import { Virtuoso, LogLevel } from "react-virtuoso";
+import { MemoizedPostListItem } from "./memoized-post-list-item";
 
 export function InfiniteVirtualList({
   sessionUserId,
@@ -51,10 +47,6 @@ export function InfiniteVirtualList({
   useEffect(() => {
     if (fetcher.data?.posts) {
       setPosts((prevPosts) => {
-        // Intersection observer rarely fires twice and might
-        // result in duplicate values being pushed. We need to
-        // avoid that.
-
         // Check if any of the new posts already exist in the current posts
         // Assumes all posts have a unique uuid
         const hasDuplicates =
@@ -78,42 +70,24 @@ export function InfiniteVirtualList({
   return (
     <Virtuoso
       data={posts}
+      // className="min-h-[1000px]" If there is a weird view jump during search use this.
       useWindowScroll
+      initialTopMostItemIndex={0}
       endReached={loadMore}
+      initialItemCount={5}
+      logLevel={LogLevel.DEBUG}
+      overscan={500} // pixels
       itemContent={(index, post) => {
         return (
-          <Post
-            avatarUrl={post.author.avatar_url}
-            id={post.id}
-            name={post.author.name}
-            username={post.author.username}
-            dateTimeString={formatToTwitterDate(post.created_at)}
-            title={post.title}
-            userId={post.user_id}
-            key={post.id}
-          >
-            <div className="flex items-center justify-between w-24 md:w-32">
-              <div className="flex items-center w-1/2">
-                <Like
-                  likedByUser={post.isLikedByUser}
-                  likes={post.likes}
-                  sessionUserId={sessionUserId}
-                  postId={post.id}
-                />
-              </div>
-              <div className="flex items-center w-1/2">
-                <ViewComments
-                  number={post.comments.length}
-                  pathname={`/gitposts/${post.id}`}
-                />
-              </div>
-            </div>
-          </Post>
+          <MemoizedPostListItem
+            post={post}
+            index={index}
+            sessionUserId={sessionUserId}
+          />
         );
       }}
       components={{
         Footer: () => {
-          console.log("hasMorePages ", hasMorePages);
           if (!hasMorePages) {
             return null;
           }

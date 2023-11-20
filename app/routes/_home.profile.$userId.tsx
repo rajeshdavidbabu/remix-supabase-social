@@ -2,7 +2,7 @@ import { json, redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
-import { InfiniteVirtualList } from "~/components/infinite-virtual-list";
+import { InfiniteVirtualList } from "~/components/stateful/infinite-virtual-list";
 
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Separator } from "~/components/ui/separator";
@@ -89,10 +89,9 @@ export default function Profile() {
       <h2 className="text-xl font-heading font-semibold">{"User posts"}</h2>
       <br />
       <InfiniteVirtualList
-        posts={posts}
         sessionUserId={sessionUserId}
+        posts={posts}
         totalPages={totalPages}
-        isSearching={false}
       />
     </div>
   );

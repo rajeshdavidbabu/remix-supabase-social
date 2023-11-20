@@ -3,12 +3,7 @@ import { type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { Post } from "~/components/post";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardTitle } from "~/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +11,7 @@ import {
   DialogHeader,
 } from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
-import { ViewComments } from "~/components/view-comments";
+import { ViewComments } from "~/components/stateful/view-comments";
 import { getPostWithDetailsById } from "~/lib/database.server";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
@@ -27,7 +22,6 @@ import {
 } from "~/lib/utils";
 import { Like } from "./gitposts.like";
 import ReactMarkdown from "react-markdown";
-import { Separator } from "~/components/ui/separator";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

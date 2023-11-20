@@ -11,7 +11,7 @@ import {
   useOutletContext,
   Link,
 } from "@remix-run/react";
-import { Logout } from "~/components/logout";
+import { Logout } from "~/components/stateful/logout";
 import type { SupabaseOutletContext } from "~/lib/supabase";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { getUserDataFromSession } from "~/lib/utils";

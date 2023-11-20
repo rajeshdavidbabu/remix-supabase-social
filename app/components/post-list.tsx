@@ -2,7 +2,7 @@ import { formatToTwitterDate } from "~/lib/utils";
 import { Post } from "./post";
 import { Like } from "~/routes/gitposts.like";
 import type { CombinedPostsWithAuthorAndLikes } from "~/lib/utils";
-import { ViewComments } from "./view-comments";
+import { ViewComments } from "./stateful/view-comments";
 
 export function PostList({
   sessionUserId,
