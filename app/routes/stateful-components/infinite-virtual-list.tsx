@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type CombinedPostsWithAuthorAndLikes } from "~/lib/utils";
+import { type CombinedPostsWithAuthorAndLikes } from "~/lib/types";
 import { useFetcher, useLocation } from "@remix-run/react";
 
 import { PostSkeleton } from "../../components/post";

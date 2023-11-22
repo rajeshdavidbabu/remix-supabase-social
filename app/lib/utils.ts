@@ -1,57 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Session } from "@supabase/supabase-js";
-import type { Database } from "database.types";
-
-type Post = Database["public"]["Tables"]["posts"]["Row"];
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type Comment = Database["public"]["Tables"]["comments"]["Row"];
-
-// Combine types to create PostWithAuthorAndLikes
-export type PostWithDetails = Post & {
-  author: Profile | null;
-  likes: { user_id: string }[];
-  comments: Comment[];
-};
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export function getUserDataFromSession(session: Session) {
-  const userId = session.user.id;
-  const userAvatarUrl = session.user.user_metadata.avatar_url;
-  const username = session.user.user_metadata.user_name;
-
-  return { userId, userAvatarUrl, username };
-}
-
-export type CombinedPostsWithAuthorAndLikes = ReturnType<
-  typeof combinePostsWithLikes
->;
-
-export type CombinedPostWithAuthorAndLikes =
-  CombinedPostsWithAuthorAndLikes[number];
-
-export function combinePostsWithLikes(
-  data: PostWithDetails[] | null,
-  sessionUserId: string
-) {
-  const posts =
-    data?.map((post) => {
-      return {
-        ...post,
-        isLikedByUser: !!post.likes.find(
-          (like) => like.user_id === sessionUserId
-        ),
-        likes: post.likes.length,
-        comments: post.comments,
-        author: post.author!, // cannot be null
-      };
-    }) ?? [];
-
-  return posts;
-}
+import type { PostWithCommentDetails, PostWithDetails } from "./types";
 
 export function formatToTwitterDate(dateTimeString: string) {
   const date = new Date(dateTimeString);
@@ -85,4 +35,65 @@ export function formatToTwitterDate(dateTimeString: string) {
   }${minutes} ${amPM} · ${month} ${day}, ${year}`;
 
   return formattedDate;
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function getUserDataFromSession(session: Session) {
+  const userId = session.user.id;
+  const userAvatarUrl = session.user.user_metadata.avatar_url;
+  const username = session.user.user_metadata.user_name;
+
+  return { userId, userAvatarUrl, username };
+}
+
+export function combinePostsWithLikes(
+  data: PostWithDetails[] | null,
+  sessionUserId: string
+) {
+  const posts =
+    data?.map((post) => {
+      return {
+        ...post,
+        isLikedByUser: !!post.likes.find(
+          (like) => like.user_id === sessionUserId
+        ),
+        likes: post.likes.length,
+        comments: post.comments,
+        author: post.author!, // cannot be null
+      };
+    }) ?? [];
+
+  return posts;
+}
+
+export function combinePostsWithLikesAndComments(
+  data: PostWithCommentDetails[] | null,
+  sessionUserId: string
+) {
+  const posts =
+    data?.map((post) => {
+      // Map each comment to rename avatar_url to avatarUrl
+      const commentsWithAvatarUrl = post.comments.map((comment) => ({
+        ...comment,
+        author: {
+          username: comment.author!.username,
+          avatarUrl: comment.author!.avatar_url,
+        },
+      }));
+
+      return {
+        ...post,
+        isLikedByUser: !!post.likes.find(
+          (like) => like.user_id === sessionUserId
+        ),
+        likes: post.likes.length,
+        comments: commentsWithAvatarUrl, // Use the transformed comments
+        author: post.author!, // author is guaranteed
+      };
+    }) ?? [];
+
+  return posts;
 }

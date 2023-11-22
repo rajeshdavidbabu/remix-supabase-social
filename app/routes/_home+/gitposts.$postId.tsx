@@ -1,9 +1,9 @@
 import { json, redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useNavigate } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { Post } from "~/components/post";
-import { Card, CardTitle } from "~/components/ui/card";
+import { Card, CardDescription } from "~/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +16,9 @@ import { getPostWithDetailsById } from "~/lib/database.server";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import {
-  combinePostsWithLikes,
-  formatToTwitterDate,
+  combinePostsWithLikesAndComments,
   getUserDataFromSession,
+  formatToTwitterDate,
 } from "~/lib/utils";
 import { Like } from "~/routes/gitposts+/like";
 import ReactMarkdown from "react-markdown";
@@ -45,7 +45,7 @@ export let loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const { userId: sessionUserId } = getUserDataFromSession(session);
 
-  const posts = combinePostsWithLikes(data, sessionUserId);
+  const posts = combinePostsWithLikesAndComments(data, sessionUserId);
 
   return json(
     {
@@ -69,9 +69,9 @@ export default function CurrentPost() {
         setOpen(open);
       }}
     >
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl h-[90vh] overflow-y-scroll">
         <DialogHeader>
-          <DialogDescription>
+          <DialogDescription className="my-2 text-left">
             <Post
               avatarUrl={post.author.avatar_url}
               id={post.id}
@@ -94,28 +94,69 @@ export default function CurrentPost() {
                 <div className="flex items-center w-1/2">
                   <ViewComments
                     number={post.comments.length}
-                    pathname={`/gitposts/${post.id}`}
+                    pathname={`/`}
                     readonly={true}
                   />
                 </div>
               </div>
             </Post>
-            {post.comments.length ? (
-              <Card className="my-2 min-h-24 max-h-48 overflow-y-scroll p-4">
-                <CardTitle>Comments</CardTitle>
-                {post.comments.map((comment, index) => (
-                  <div key={index} className="text-sm prose p-4">
-                    <ReactMarkdown>{comment.title}</ReactMarkdown>
-                  </div>
-                ))}
-              </Card>
-            ) : (
-              <></>
-            )}
             <Textarea></Textarea>
+            {post.comments.length ? (
+              <div>
+                {post.comments.map(({ title, author }, index) => (
+                  <Card key={index} className="my-2 min-h-24 p-4">
+                    <Comment
+                      title={title}
+                      avatarUrl={author.avatarUrl}
+                      username={author.username}
+                    />
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="p-4">
+                <CardDescription>
+                  No comments for this post. Why don't you add one ?
+                </CardDescription>
+              </Card>
+            )}
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
   );
 }
+
+type CommentProps = {
+  avatarUrl: string;
+  username: string;
+  title: string;
+};
+
+const Comment = ({ avatarUrl, username, title }: CommentProps) => {
+  return (
+    <div className="flex flex-col items-start">
+      <div className="flex items-center">
+        <img
+          alt="User Avatar"
+          className="rounded-full"
+          height="30" // Adjust the size as needed
+          src={avatarUrl}
+          style={{
+            aspectRatio: "1 / 1",
+            objectFit: "cover",
+          }}
+          width="30"
+        />
+        <div className="ml-2">
+          <Link prefetch="intent" replace to={`/profile/${username}`}>
+            <div className="text-sm font-semibold">{username}</div>
+          </Link>
+        </div>
+      </div>
+      <div className="text-sm prose p-4">
+        <ReactMarkdown>{title}</ReactMarkdown>
+      </div>
+    </div>
+  );
+};

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import type { CombinedPostWithAuthorAndLikes } from "~/lib/utils";
+import type { CombinedPostWithAuthorAndLikes } from "~/lib/types";
 import { formatToTwitterDate } from "~/lib/utils";
 import { Post } from "~/components/post";
 import { ViewComments } from "./view-comments";
@@ -18,6 +18,14 @@ export const MemoizedPostListItem = memo(
   }) => {
     const location = useLocation();
 
+    let pathnameWithSearchQuery = "";
+
+    if (location.search) {
+      pathnameWithSearchQuery = `${location.pathname}/${post.id}${location.search}`;
+    } else {
+      pathnameWithSearchQuery = `${location.pathname}/${post.id}`;
+    }
+
     return (
       <Post
         avatarUrl={post.author.avatar_url}
@@ -34,13 +42,13 @@ export const MemoizedPostListItem = memo(
             <ViewLikes
               likedByUser={post.isLikedByUser}
               likes={post.likes}
-              pathname={`${location.pathname}/${post.id}`}
+              pathname={pathnameWithSearchQuery}
             />
           </div>
           <div className="flex items-center w-1/2">
             <ViewComments
               number={post.comments.length}
-              pathname={`${location.pathname}/${post.id}`}
+              pathname={pathnameWithSearchQuery}
             />
           </div>
         </div>

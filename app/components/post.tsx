@@ -45,8 +45,8 @@ export function Post({
         key={id}
         className="rounded-xl shadow-md overflow-hidden min-h-[12rem]"
       >
-        <div className="md:flex">
-          <div className="md:flex-shrink-0">
+        <div className="flex">
+          <div className="flex-shrink-0">
             <span className="object-cover md:w-48 rounded-md bg-muted" />
           </div>
           <div className="p-4 md:p-8 w-full">

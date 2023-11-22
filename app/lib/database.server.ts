@@ -48,8 +48,11 @@ export async function getPostWithDetailsById({
 }) {
   const { data, error } = await dbClient
     .from("posts")
-    .select("*, author: profiles(*), likes(user_id), comments(*)")
-    .eq("id", postId); // Filter by the specific post ID
+    .select(
+      "*, author: profiles(*), likes(user_id), comments(*, author: profiles(username, avatar_url))"
+    )
+    .order("created_at", { foreignTable: "comments", ascending: false })
+    .eq("id", postId);
 
   if (error) {
     console.error("Error occurred during getPostWithDetailsById: ", error);
