@@ -5,10 +5,10 @@ import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import { WritePost } from "~/routes/gitposts+/post";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { Separator } from "~/components/ui/separator";
-import { PostSearch } from "~/routes/components/post-search";
+import { PostSearch } from "~/components/post-search";
 import { getAllPostsWithDetails } from "~/lib/database.server";
 import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
-import { InfiniteVirtualList } from "~/routes/components/infinite-virtual-list";
+import { InfiniteVirtualList } from "~/routes/stateful-components/infinite-virtual-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
@@ -58,26 +58,7 @@ export default function GitPosts() {
     query,
     totalPages,
   } = useLoaderData<typeof loader>();
-  // const { supabase } = useOutletContext<SupabaseOutletContext>();
-  // const revalidator = useRevalidator();
   const navigation = useNavigation();
-
-  // useEffect(() => {
-  //   const subscriptionCallback = () => {
-  //     if (revalidator.state === "idle") {
-  //       revalidator.revalidate();
-  //     }
-  //   };
-
-  //   const subscription = getRealTimeSubscription(
-  //     supabase,
-  //     subscriptionCallback
-  //   );
-
-  //   return () => {
-  //     supabase.removeChannel(subscription);
-  //   };
-  // }, [revalidator, supabase]);
 
   // When nothing is happening, navigation.location will be undefined,
   // but when the user navigates it will be populated with the next

@@ -3,7 +3,7 @@ import { type LoaderFunctionArgs } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
-import { InfiniteVirtualList } from "~/routes/components/infinite-virtual-list";
+import { InfiniteVirtualList } from "~/routes/stateful-components/infinite-virtual-list";
 
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Separator } from "~/components/ui/separator";

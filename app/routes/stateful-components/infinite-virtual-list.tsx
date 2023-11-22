@@ -4,7 +4,7 @@ import { useFetcher, useLocation } from "@remix-run/react";
 
 import { PostSkeleton } from "../../components/post";
 import { Virtuoso, LogLevel } from "react-virtuoso";
-import { MemoizedPostListItem } from "./memoized-post-list-item";
+import { MemoizedPostListItem } from "../../components/memoized-post-list-item";
 import type { loader } from "../_home+/gitposts";
 
 export function InfiniteVirtualList({

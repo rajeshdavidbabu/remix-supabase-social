@@ -11,7 +11,7 @@ import {
   DialogHeader,
 } from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
-import { ViewComments } from "~/routes/components/view-comments";
+import { ViewComments } from "~/components/view-comments";
 import { getPostWithDetailsById } from "~/lib/database.server";
 
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
