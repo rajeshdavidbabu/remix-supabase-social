@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useToast } from "~/components/ui/use-toast";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
-import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { Star } from "lucide-react";
+// import { loader } from "../_home+/gitposts.$postId";
 
 export async function action({ request }: ActionFunctionArgs) {
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
@@ -23,7 +23,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (!userId || !postId) {
     return json(
-      { error: "User or Tweet Id missing" },
+      { error: "User or Tweet Id missing", skipRevalidation: true },
       { status: 400, headers }
     );
   }
@@ -33,22 +33,28 @@ export async function action({ request }: ActionFunctionArgs) {
     const { error } = await supabase
       .from("likes")
       .insert({ user_id: userId, post_id: postId });
+
     if (error) {
-      console.log("Like error ", error);
-      return json({ error: "Failed to like" }, { status: 500, headers });
+      return json(
+        { error: "Failed to like", skipRevalidation: true },
+        { status: 500, headers }
+      );
     }
   } else {
     const { error } = await supabase
       .from("likes")
       .delete()
       .match({ user_id: userId, post_id: postId });
-    console.log("unliked");
+
     if (error) {
-      return json({ error: "Failed to unlike" }, { status: 500, headers });
+      return json(
+        { error: "Failed to unlike", skipRevalidation: true },
+        { status: 500, headers }
+      );
     }
   }
 
-  return json({ ok: true, error: null }, { headers });
+  return json({ ok: true, error: null, skipRevalidation: true }, { headers });
 }
 
 type LikeProps = {
@@ -57,6 +63,7 @@ type LikeProps = {
   postId: string;
   sessionUserId: string;
   readonly?: boolean;
+  revalidateCurrentPage?: () => void;
 };
 
 export function Like({
@@ -67,96 +74,36 @@ export function Like({
   readonly,
 }: LikeProps) {
   const { toast } = useToast();
-  const [optimisticLikes, setOptimisticLikes] = useState(likes);
-  const [optimisticLikedByUser, setOptimisticLikedByUser] =
-    useState(likedByUser);
+  const fetcher = useFetcher<typeof action>();
+  // const data = useRouteLoaderData("routes/_home+/gitposts.$postId");
 
-  const likeUnlikeAction = async (formData: FormData) => {
-    const response = await fetch("/gitposts/like", {
-      method: "POST",
-      body: formData,
-    });
+  const inFlightAction = fetcher.formData?.get("action");
+  const isLoading = fetcher.state !== "idle";
 
-    if (!response.ok) {
-      const error = await response.json();
+  const optimisticLikedByUser = inFlightAction
+    ? inFlightAction === "like"
+    : likedByUser;
+  const optimisticLikes = inFlightAction
+    ? inFlightAction === "like"
+      ? likes + 1
+      : likes - 1
+    : likes;
 
-      throw new Error(error.error);
-    }
-
-    return response.json();
-  };
-
-  const fetchLikesCount = async (postId: string) => {
-    const response = await fetch(`/gitposts/likes/${postId}`);
-    if (!response.ok) {
-      const error = await response.json();
-
-      throw new Error(error.error);
-    }
-
-    return response.json();
-  };
-  const [isLiking, setIsLiking] = useState(false);
-
-  const mutation = useMutation({
-    mutationFn: likeUnlikeAction,
-    onMutate: async (variables) => {
-      setIsLiking(true); // Start action
-      const action = variables.get("action");
-
-      // Optimistically update the UI
-      setOptimisticLikes((likes) =>
-        action === "like" ? likes + 1 : likes - 1
-      );
-      setOptimisticLikedByUser(action === "like");
-    },
-    onError: (error) => {
-      // Rollback the optimistic update
-      setOptimisticLikes(likes);
-      setOptimisticLikedByUser(likedByUser);
-
+  // Show toast in error scenarios
+  useEffect(() => {
+    if (fetcher.data?.error && !isLoading) {
       toast({
         variant: "destructive",
         title: "Oops",
-        description: error.message,
+        description: `Error occured: ${fetcher.data?.error}`,
       });
-    },
-    onSettled: (data, error, variables) => {
-      // Sync with server likes
-      const postId = variables.get("postId");
-
-      if (!postId) {
-        console.error("You should not see this error !!!");
-        return;
-      }
-
-      fetchLikesCount(postId.toString())
-        .then(({ count }) => {
-          setOptimisticLikes(count);
-        })
-        .catch((error) => {
-          toast({
-            variant: "destructive",
-            title: "Oops",
-            description: error.message,
-          });
-        })
-        .finally(() => {
-          setIsLiking(false); // End action
-        });
-    },
-  });
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    mutation.mutate(formData);
-  };
-  const isDisabled = readonly || isLiking;
+    } else {
+      console.log("Fetcher data returned ", fetcher.data);
+    }
+  }, [fetcher.data, isLoading, toast]);
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <fetcher.Form action={`/gitposts/like`} method="post">
       <input type="hidden" name="postId" value={postId} />
       <input type="hidden" name="userId" value={sessionUserId} />
       <input
@@ -164,11 +111,14 @@ export function Like({
         name="action"
         value={optimisticLikedByUser ? "unlike" : "like"}
       />
-      <button className={`group flex items-center`} disabled={isDisabled}>
+      <button
+        className={`group flex items-center focus:outline-none`}
+        disabled={isLoading}
+      >
         {optimisticLikedByUser ? (
           <Star
             className={`w-4 h-4 fill-current ${
-              isDisabled
+              isLoading
                 ? "text-gray-500"
                 : "text-blue-700 group-hover:text-blue-400"
             }`}
@@ -176,7 +126,7 @@ export function Like({
         ) : (
           <Star
             className={`w-4 h-4 fill-current ${
-              isDisabled
+              isLoading
                 ? "text-gray-500"
                 : "text-gray-500 group-hover:text-blue-400"
             }`}
@@ -184,12 +134,12 @@ export function Like({
         )}
         <span
           className={`ml-2 text-sm ${
-            isDisabled ? "text-gray-500" : "group-hover:text-blue-400 "
+            isLoading ? "text-gray-500" : "group-hover:text-blue-400 "
           }${optimisticLikedByUser ? "text-blue-700" : "text-gray-500"}`}
         >
           {optimisticLikes}
         </span>
       </button>
-    </Form>
+    </fetcher.Form>
   );
 }

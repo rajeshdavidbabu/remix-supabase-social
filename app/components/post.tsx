@@ -65,12 +65,12 @@ export function Post({
                 />
                 <div className="ml-4">
                   <div className="text-sm md:text-lg text-black font-semibold">
-                    <Link prefetch="intent" to={`/profile/${userId}`}>
+                    <Link prefetch="intent" to={`/profile/${username}`}>
                       {name}
                     </Link>
                   </div>
                   <div className="text-gray-400 text-sm md:text-md">
-                    <Link prefetch="intent" to={`/profile/${userId}`}>
+                    <Link prefetch="intent" to={`/profile/${username}`}>
                       @{username}
                     </Link>
                   </div>

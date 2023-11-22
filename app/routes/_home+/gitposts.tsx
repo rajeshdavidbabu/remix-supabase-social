@@ -1,24 +1,15 @@
 import { redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import {
-  Outlet,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-  useRevalidator,
-} from "@remix-run/react";
+import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
+import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import { WritePost } from "~/routes/gitposts+/post";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
-import {
-  type SupabaseOutletContext,
-  getRealTimeSubscription,
-} from "~/lib/supabase";
-import { useEffect } from "react";
 import { Separator } from "~/components/ui/separator";
 import { PostSearch } from "~/routes/components/post-search";
 import { getAllPostsWithDetails } from "~/lib/database.server";
 import { combinePostsWithLikes, getUserDataFromSession } from "~/lib/utils";
 import { InfiniteVirtualList } from "~/routes/components/infinite-virtual-list";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
@@ -43,7 +34,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     userId: sessionUserId,
     userAvatarUrl,
-    userName,
+    username,
   } = getUserDataFromSession(session);
 
   const posts = combinePostsWithLikes(data, sessionUserId);
@@ -51,7 +42,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   return json(
     {
       posts,
-      userDetails: { sessionUserId, userAvatarUrl, userName },
+      userDetails: { sessionUserId, userAvatarUrl, username },
       query,
       totalPages,
       limit,
@@ -67,26 +58,26 @@ export default function GitPosts() {
     query,
     totalPages,
   } = useLoaderData<typeof loader>();
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
-  const revalidator = useRevalidator();
+  // const { supabase } = useOutletContext<SupabaseOutletContext>();
+  // const revalidator = useRevalidator();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const subscriptionCallback = () => {
-      if (revalidator.state === "idle") {
-        revalidator.revalidate();
-      }
-    };
+  // useEffect(() => {
+  //   const subscriptionCallback = () => {
+  //     if (revalidator.state === "idle") {
+  //       revalidator.revalidate();
+  //     }
+  //   };
 
-    const subscription = getRealTimeSubscription(
-      supabase,
-      subscriptionCallback
-    );
+  //   const subscription = getRealTimeSubscription(
+  //     supabase,
+  //     subscriptionCallback
+  //   );
 
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, [revalidator, supabase]);
+  //   return () => {
+  //     supabase.removeChannel(subscription);
+  //   };
+  // }, [revalidator, supabase]);
 
   // When nothing is happening, navigation.location will be undefined,
   // but when the user navigates it will be populated with the next
@@ -99,15 +90,36 @@ export default function GitPosts() {
 
   return (
     <div className="w-full max-w-xl px-4 flex flex-col">
-      <Outlet />
-      <WritePost sessionUserId={sessionUserId} />
-      <Separator />
-      <PostSearch searchQuery={query} isSearching={isSearching} />
-      <InfiniteVirtualList
-        sessionUserId={sessionUserId}
-        posts={posts}
-        totalPages={totalPages}
-      />
+      <Tabs defaultValue="view-posts" className="my-2">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="view-posts">View Posts</TabsTrigger>
+          <TabsTrigger value="write-post">Write Post</TabsTrigger>
+        </TabsList>
+        <TabsContent value="view-posts">
+          <Outlet />
+          <Separator />
+          <PostSearch searchQuery={query} isSearching={isSearching} />
+          <InfiniteVirtualList
+            sessionUserId={sessionUserId}
+            posts={posts}
+            totalPages={totalPages}
+          />
+        </TabsContent>
+        <TabsContent value="write-post">
+          <WritePost sessionUserId={sessionUserId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
+}
+
+export function shouldRevalidate({
+  actionResult,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  if (actionResult?.skipRevalidation) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
 }

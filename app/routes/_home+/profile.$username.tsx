@@ -1,6 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { InfiniteVirtualList } from "~/routes/components/infinite-virtual-list";
 
@@ -9,9 +10,10 @@ import { Separator } from "~/components/ui/separator";
 import { getPostsForUser, getProfileForUsername } from "~/lib/database.server";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { combinePostsWithLikes } from "~/lib/utils";
+import { useEffect } from "react";
 
 export let loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { userId } = params;
+  const { username } = params;
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
     request,
   });
@@ -21,7 +23,7 @@ export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   // Redirect to 404 page if username is invalid
-  if (!userId) {
+  if (!username) {
     return redirect("/404", { headers });
   }
 
@@ -29,32 +31,34 @@ export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   const searchParams = url.searchParams;
   const page = Number(searchParams.get("page")) || 1;
 
-  const [{ data: profile }, { data: rawPosts, limit, totalPages }] =
-    await Promise.all([
-      getProfileForUsername({
-        dbClient: supabase,
-        userId,
-      }),
-      getPostsForUser({
-        dbClient: supabase,
-        userId,
-        page,
-      }),
-    ]);
+  const { data: profiles } = await getProfileForUsername({
+    dbClient: supabase,
+    username,
+  });
+
+  const profile = profiles ? profiles[0] : null;
+
+  // User not found
+  if (!profile) {
+    return redirect("/404", { headers });
+  }
+
+  const {
+    data: rawPosts,
+    limit,
+    totalPages,
+  } = await getPostsForUser({
+    dbClient: supabase,
+    userId: profile.id,
+    page,
+  });
 
   const sessionUserId = session.user.id;
   const posts = combinePostsWithLikes(rawPosts, sessionUserId);
 
-  // Redirect to 404 page if profile not found
-  if (!profile || !profile[0]) {
-    return redirect("/404", { headers });
-  }
-
-  const userProfile = profile[0];
-
   return json(
     {
-      profile: userProfile,
+      profile,
       sessionUserId: session.user.id,
       posts,
       limit,
@@ -72,8 +76,15 @@ export default function Profile() {
     totalPages,
   } = useLoaderData<typeof loader>();
 
+  useEffect(() => {
+    return () => {
+      console.log("unmounted at profile ");
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col w-full max-w-xl px-4">
+    <div className="flex flex-col w-full max-w-xl px-4 my-2">
+      <Outlet />
       <div className="flex flex-col justify-center items-center m-4">
         <Avatar className="h-24 w-24 mb-4">
           <AvatarImage alt="User avatar" src={avatar_url} />
@@ -95,4 +106,15 @@ export default function Profile() {
       />
     </div>
   );
+}
+
+export function shouldRevalidate({
+  actionResult,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  if (actionResult?.skipRevalidation) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
 }

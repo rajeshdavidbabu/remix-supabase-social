@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { type CombinedPostsWithAuthorAndLikes } from "~/lib/utils";
 import { useFetcher, useLocation } from "@remix-run/react";
-import type { loader } from "~/routes/_home+/gitposts";
 
 import { PostSkeleton } from "../../components/post";
 import { Virtuoso, LogLevel } from "react-virtuoso";
 import { MemoizedPostListItem } from "./memoized-post-list-item";
+import type { loader } from "../_home+/gitposts";
 
 export function InfiniteVirtualList({
   sessionUserId,
@@ -21,6 +21,8 @@ export function InfiniteVirtualList({
   const fetcher = useFetcher<typeof loader>();
   const [currentPage, setCurrentPage] = useState(1);
   const location = useLocation();
+
+  console.log("Incoming current page ", currentPage);
 
   // Update the old posts when user is searching for new
   const [prevPosts, setPrevPosts] = useState(incomingPosts);
@@ -70,7 +72,6 @@ export function InfiniteVirtualList({
   return (
     <Virtuoso
       data={posts}
-      // className="min-h-[1000px]" If there is a weird view jump during search use this.
       useWindowScroll
       initialTopMostItemIndex={0}
       endReached={loadMore}

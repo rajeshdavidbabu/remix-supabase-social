@@ -1,9 +1,10 @@
 import { memo } from "react";
 import type { CombinedPostWithAuthorAndLikes } from "~/lib/utils";
 import { formatToTwitterDate } from "~/lib/utils";
-import { Like } from "~/routes/gitposts+/like";
-import { Post } from "../../components/post";
+import { Post } from "~/components/post";
 import { ViewComments } from "./view-comments";
+import { ViewLikes } from "./view-likes";
+import { useLocation } from "@remix-run/react";
 
 export const MemoizedPostListItem = memo(
   ({
@@ -15,6 +16,8 @@ export const MemoizedPostListItem = memo(
     sessionUserId: string;
     index: number;
   }) => {
+    const location = useLocation();
+
     return (
       <Post
         avatarUrl={post.author.avatar_url}
@@ -28,17 +31,16 @@ export const MemoizedPostListItem = memo(
       >
         <div className="flex items-center justify-between w-24 md:w-32">
           <div className="flex items-center w-1/2">
-            <Like
+            <ViewLikes
               likedByUser={post.isLikedByUser}
               likes={post.likes}
-              sessionUserId={sessionUserId}
-              postId={post.id}
+              pathname={`${location.pathname}/${post.id}`}
             />
           </div>
           <div className="flex items-center w-1/2">
             <ViewComments
               number={post.comments.length}
-              pathname={`/gitposts/${post.id}`}
+              pathname={`${location.pathname}/${post.id}`}
             />
           </div>
         </div>

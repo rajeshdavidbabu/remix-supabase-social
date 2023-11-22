@@ -26,17 +26,17 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/login", { headers });
   }
 
-  const { userId, userAvatarUrl, userName } = getUserDataFromSession(session);
+  const { userId, userAvatarUrl, username } = getUserDataFromSession(session);
 
   return json(
-    { userDetails: { userId, userAvatarUrl, userName } },
+    { userDetails: { userId, userAvatarUrl, username } },
     { headers }
   );
 };
 
 export default function Index() {
   const {
-    userDetails: { userAvatarUrl, userName, userId },
+    userDetails: { userAvatarUrl, username },
   } = useLoaderData<typeof loader>();
   const { supabase } = useOutletContext<SupabaseOutletContext>();
   const [isNavOpen, setNavOpen] = useState(false);
@@ -58,8 +58,8 @@ export default function Index() {
               : "hidden md:flex"
           }`}
         >
-          <Link prefetch="intent" to={`/profile/${userId}`}>
-            @{userName}
+          <Link prefetch="intent" to={`/profile/${username}`}>
+            @{username}
           </Link>
           <img
             alt="Profile"

@@ -21,9 +21,9 @@ export function cn(...inputs: ClassValue[]) {
 export function getUserDataFromSession(session: Session) {
   const userId = session.user.id;
   const userAvatarUrl = session.user.user_metadata.avatar_url;
-  const userName = session.user.user_metadata.user_name;
+  const username = session.user.user_metadata.user_name;
 
-  return { userId, userAvatarUrl, userName };
+  return { userId, userAvatarUrl, username };
 }
 
 export type CombinedPostsWithAuthorAndLikes = ReturnType<

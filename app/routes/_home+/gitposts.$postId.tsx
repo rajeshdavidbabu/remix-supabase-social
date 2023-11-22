@@ -23,17 +23,12 @@ import {
 import { Like } from "~/routes/gitposts+/like";
 import ReactMarkdown from "react-markdown";
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { postId } = params;
+  console.log("Incoming params ", params);
   const { supabase, headers, session } = await getSupabaseWithSessionHeaders({
     request,
   });
-
-  await delay(3000);
 
   if (!session) {
     return redirect("/login", { headers });
@@ -61,7 +56,7 @@ export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   );
 };
 
-export default function Profile() {
+export default function CurrentPost() {
   const { post, sessionUserId } = useLoaderData<typeof loader>();
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
@@ -94,7 +89,6 @@ export default function Profile() {
                     likes={post.likes}
                     sessionUserId={sessionUserId}
                     postId={post.id}
-                    readonly={true}
                   />
                 </div>
                 <div className="flex items-center w-1/2">

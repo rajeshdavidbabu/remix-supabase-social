@@ -103,12 +103,15 @@ export async function getPostsForUser({
 
 export async function getProfileForUsername({
   dbClient,
-  userId,
+  username,
 }: {
   dbClient: SupabaseClient<Database>;
-  userId: string;
+  username: string;
 }) {
-  const profileQuery = dbClient.from("profiles").select("*").eq("id", userId);
+  const profileQuery = dbClient
+    .from("profiles")
+    .select("*")
+    .eq("username", username);
 
   const { data, error } = await profileQuery;
 
