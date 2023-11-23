@@ -21,9 +21,12 @@ export async function action({ request }: ActionFunctionArgs) {
   const postId = formData.get("postId")?.toString();
   const userId = formData.get("userId")?.toString();
 
+  // A skipRevalidation of the routes you want during this action
+  const skipRevalidation = ["/gitposts", "/profile.$username"];
+
   if (!userId || !postId) {
     return json(
-      { error: "User or Tweet Id missing", skipRevalidation: true },
+      { error: "User or Tweet Id missing", skipRevalidation },
       { status: 400, headers }
     );
   }
@@ -36,7 +39,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (error) {
       return json(
-        { error: "Failed to like", skipRevalidation: true },
+        { error: "Failed to like", skipRevalidation },
         { status: 500, headers }
       );
     }
@@ -48,13 +51,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (error) {
       return json(
-        { error: "Failed to unlike", skipRevalidation: true },
+        { error: "Failed to unlike", skipRevalidation },
         { status: 500, headers }
       );
     }
   }
 
-  return json({ ok: true, error: null, skipRevalidation: true }, { headers });
+  return json({ ok: true, error: null, skipRevalidation }, { headers });
 }
 
 type LikeProps = {

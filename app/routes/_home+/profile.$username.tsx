@@ -112,7 +112,11 @@ export function shouldRevalidate({
   actionResult,
   defaultShouldRevalidate,
 }: ShouldRevalidateFunctionArgs) {
-  if (actionResult?.skipRevalidation) {
+  const skipRevalidation =
+    actionResult?.skipRevalidation &&
+    actionResult?.skipRevalidation?.includes("/profile.$username");
+
+  if (skipRevalidation) {
     return false;
   }
 

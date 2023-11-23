@@ -21,7 +21,7 @@ export interface Database {
           created_at?: string
           id?: string
           post_id: string
-          title?: string
+          title: string
           user_id: string
         }
         Update: {

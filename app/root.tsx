@@ -12,7 +12,6 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import styles from "~/tailwind.css";
 import {
   getSupabaseEnv,
@@ -34,7 +33,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
   const { env, session } = useLoaderData<typeof loader>();
   const { supabase } = useSupabase({ env, session });
-  const queryClient = new QueryClient();
 
   return (
     <html lang="en">
@@ -46,9 +44,7 @@ export default function App() {
       </head>
       <body className="overscroll-none">
         <Toaster />
-        <QueryClientProvider client={queryClient}>
-          <Outlet context={{ supabase }} />
-        </QueryClientProvider>
+        <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

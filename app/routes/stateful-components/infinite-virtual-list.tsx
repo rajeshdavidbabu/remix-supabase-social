@@ -22,8 +22,6 @@ export function InfiniteVirtualList({
   const [currentPage, setCurrentPage] = useState(1);
   const location = useLocation();
 
-  console.log("Incoming current page ", currentPage);
-
   // Update the old posts when user is searching for new
   const [prevPosts, setPrevPosts] = useState(incomingPosts);
   if (incomingPosts !== prevPosts) {

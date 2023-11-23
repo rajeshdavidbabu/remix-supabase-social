@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogHeader,
 } from "~/components/ui/dialog";
-import { Textarea } from "~/components/ui/textarea";
+import { WritePost } from "~/components/write-post";
 import { ViewComments } from "~/components/view-comments";
 import { getPostWithDetailsById } from "~/lib/database.server";
 
@@ -100,7 +100,11 @@ export default function CurrentPost() {
                 </div>
               </div>
             </Post>
-            <Textarea></Textarea>
+            <WritePost
+              sessionUserId={sessionUserId}
+              isComment={true}
+              postId={post.id}
+            />
             {post.comments.length ? (
               <div>
                 {post.comments.map(({ title, author }, index) => (
@@ -154,7 +158,7 @@ const Comment = ({ avatarUrl, username, title }: CommentProps) => {
           </Link>
         </div>
       </div>
-      <div className="text-sm prose p-4">
+      <div className="text-sm prose py-4">
         <ReactMarkdown>{title}</ReactMarkdown>
       </div>
     </div>

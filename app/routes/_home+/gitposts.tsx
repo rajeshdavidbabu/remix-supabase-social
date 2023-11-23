@@ -2,7 +2,7 @@ import { redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
-import { WritePost } from "~/routes/gitposts+/post";
+import { WritePost } from "~/components/write-post";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { Separator } from "~/components/ui/separator";
 import { PostSearch } from "~/components/post-search";
@@ -98,7 +98,11 @@ export function shouldRevalidate({
   actionResult,
   defaultShouldRevalidate,
 }: ShouldRevalidateFunctionArgs) {
-  if (actionResult?.skipRevalidation) {
+  const skipRevalidation =
+    actionResult?.skipRevalidation &&
+    actionResult?.skipRevalidation?.includes("/gitposts");
+
+  if (skipRevalidation) {
     return false;
   }
 
