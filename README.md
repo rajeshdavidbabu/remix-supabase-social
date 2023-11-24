@@ -1,8 +1,6 @@
-# Welcome to Gitposter
+# Welcome to Gitposter (Documentation in progress...)
 
 - A social platform app built using Remix and Supabase.
-
-## Documentation in progress...
 
 ## How do I build this ?
 Video soon on my [YTChannel](https://www.youtube.com/@raj_talks_tech/videos)
