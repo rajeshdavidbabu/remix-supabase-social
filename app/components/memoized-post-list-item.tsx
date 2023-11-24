@@ -17,7 +17,6 @@ export const MemoizedPostListItem = memo(
     index: number;
   }) => {
     const location = useLocation();
-
     let pathnameWithSearchQuery = "";
 
     if (location.search) {

@@ -1,6 +1,6 @@
 import { formatToTwitterDate } from "~/lib/utils";
 import { Post } from "./post";
-import { Like } from "~/routes/gitposts+/like";
+import { Like } from "~/routes/resources.like";
 import type { CombinedPostsWithAuthorAndLikes } from "~/lib/types";
 import { ViewComments } from "./view-comments";
 
@@ -36,7 +36,7 @@ export function PostList({
             <div className="flex items-center w-1/2">
               <ViewComments
                 number={post.comments.length}
-                pathname={`/gitposts/${post.id}`}
+                pathname={`/resources/${post.id}`}
               />
             </div>
           </div>

@@ -1,8 +1,8 @@
-import { Github } from "lucide-react";
 import { Link } from "@remix-run/react";
 import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import ReactMarkdown from "react-markdown";
+import { AppLogo } from "./app-logo";
 
 export type PostProps = {
   avatarUrl: string;
@@ -76,7 +76,7 @@ export function Post({
                   </div>
                 </div>
               </div>
-              <Github className="mr-1 h-8 w-8" />
+              <AppLogo className="h-8 w-8" />
             </div>
             <div className="mt-4 text-gray-500 text-sm prose">
               <ReactMarkdown>{title}</ReactMarkdown>

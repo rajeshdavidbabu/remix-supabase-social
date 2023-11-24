@@ -28,7 +28,7 @@ export function WritePost({
   const isPosting = fetcher.state !== "idle";
   const isDisabled = isPosting || !title;
 
-  const postActionUrl = isComment ? "/gitposts/comment" : "/gitposts/post";
+  const postActionUrl = isComment ? "/resources/comment" : "/resources/post";
 
   const formData = {
     title,

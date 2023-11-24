@@ -1,5 +1,6 @@
 import { redirect, type LoaderFunctionArgs, json } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import { AppLogo } from "~/components/app-logo";
 import { Card, CardContent, CardFooter, CardTitle } from "~/components/ui/card";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 
@@ -17,15 +18,19 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Index() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-white min-h-screen">
-      <div className="container px-4 md:px-6 max-w-2xl">
-        <div className="flex flex-col items-center space-y-4 text-center max-w-2xl">
+    <section className="w-full bg-white min-h-screen flex flex-col">
+      <nav className="bg-white flex items-center space-x-2 w-full p-4">
+        <AppLogo className="h-8 w-8 md:h-10 md:w-10" />
+        <h1 className="text-xl font-semibold text-zinc-900 ">Gitposter</h1>
+      </nav>
+      <div className="container flex-1 md:flex justify-center items-center px-4 md:px-6">
+        <div className="flex flex-col items-center space-y-4 text-center p-4 md:w-1/2">
           <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-            Welcome to our{" "}
+            A{" "}
             <span className="font-extrabold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-clip-text-webkit bg-300% animate-gradient">
-              Community Driven
+              Community-Driven
             </span>{" "}
-            Social Media Platform for Coders
+            Minimalist Social Platform for Coders
           </h1>
           <p className="text-gray-500 mt-2">
             Powered by{" "}
@@ -40,64 +45,14 @@ export default function Index() {
             Join our Community
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-          <Card className="max-w-sm relative group overflow-hidden rounded-lg">
-            <CardContent className="p-1">
-              <img
-                alt="Write Posts"
-                className="w-full object-contain h-48 hover:scale-125 transition-all duration-500"
-                height={200}
-                src={"assets/images/write-post.png"}
-                width={400}
-              />
-            </CardContent>
-            <CardFooter>
-              <CardTitle>Write Posts</CardTitle>
-            </CardFooter>
-          </Card>
-          <Card className="max-w-sm relative group overflow-hidden rounded-lg">
-            <CardContent className="p-1">
-              <img
-                alt="Like Posts"
-                className="w-full object-contain h-48 hover:scale-125 transition-all duration-500"
-                height={200}
-                src={"assets/images/like-posts.png"}
-                width={400}
-              />
-            </CardContent>
-            <CardFooter>
-              <CardTitle>Like Posts</CardTitle>
-            </CardFooter>
-          </Card>
-          <Card className="max-w-sm relative group overflow-hidden rounded-lg">
-            <CardContent className="p-1">
-              <img
-                alt="Search Posts"
-                className="w-full object-contain h-48 hover:scale-125 transition-all duration-500"
-                height={200}
-                src={"assets/images/search-posts.png"}
-                width={400}
-              />
-            </CardContent>
-            <CardFooter>
-              <CardTitle>Search Posts</CardTitle>
-            </CardFooter>
-          </Card>
-          <Card className="max-w-sm relative group overflow-hidden rounded-lg">
-            <CardContent className="p-1">
-              <img
-                alt="View Profiles"
-                className="w-full object-contain h-48 hover:scale-125 transition-all duration-500"
-                height={200}
-                src={"assets/images/view-profiles.png"}
-                width={400}
-              />
-            </CardContent>
-            <CardFooter>
-              <CardTitle>View Profiles</CardTitle>
-            </CardFooter>
-          </Card>
-        </div>
+
+        <Card className="relative group overflow-hidden rounded-lg md:w-1/2">
+          <CardContent className="p-1">
+            <video className="h-full w-full rounded-lg" autoPlay loop muted>
+              <source src="assets/videos/demo.mp4" type="video/mp4" />
+            </video>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
