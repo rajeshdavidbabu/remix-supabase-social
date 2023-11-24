@@ -15,7 +15,7 @@ export function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `http://localhost:3000/resources/auth/callback`,
+        redirectTo: `https://gitposter.dev/resources/auth/callback`,
       },
     });
 

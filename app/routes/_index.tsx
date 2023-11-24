@@ -1,7 +1,7 @@
 import { redirect, type LoaderFunctionArgs, json } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { AppLogo } from "~/components/app-logo";
-import { Card, CardContent, CardFooter, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {

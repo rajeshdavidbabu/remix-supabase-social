@@ -3,7 +3,6 @@ import { PostSkeleton } from "../../components/post";
 import { Virtuoso, LogLevel } from "react-virtuoso";
 import { MemoizedPostListItem } from "../../components/memoized-post-list-item";
 import { useInfinitePosts } from "./use-infinite-posts";
-import { Github } from "lucide-react";
 import { AppLogo } from "~/components/app-logo";
 
 export function InfiniteVirtualList({
