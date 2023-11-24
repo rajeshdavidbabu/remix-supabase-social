@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useToast } from "~/components/ui/use-toast";
 
 export function Login() {
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
+  const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -15,7 +15,7 @@ export function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `https://gitposter.dev/resources/auth/callback`,
+        redirectTo: `${domainUrl}/resources/auth/callback`,
       },
     });
 

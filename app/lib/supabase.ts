@@ -8,6 +8,7 @@ export type TypedSupabaseClient = SupabaseClient<Database>;
 
 export type SupabaseOutletContext = {
   supabase: TypedSupabaseClient;
+  domainUrl: string;
 };
 
 type SupabaseEnv = {

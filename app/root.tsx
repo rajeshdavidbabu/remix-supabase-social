@@ -26,12 +26,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, headers } = await getSupabaseWithSessionHeaders({
     request,
   });
+  const domainUrl = process.env.SUPABASE_URL!;
 
-  return json({ env: getSupabaseEnv(), session }, { headers });
+  return json({ env: getSupabaseEnv(), session, domainUrl }, { headers });
 };
 
 export default function App() {
-  const { env, session } = useLoaderData<typeof loader>();
+  const { env, session, domainUrl } = useLoaderData<typeof loader>();
+
   const { supabase } = useSupabase({ env, session });
 
   return (
@@ -44,7 +46,7 @@ export default function App() {
       </head>
       <body className="overscroll-none">
         <Toaster />
-        <Outlet context={{ supabase }} />
+        <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
