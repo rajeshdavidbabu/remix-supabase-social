@@ -14,7 +14,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return redirect(`/${next.slice(1)}`, { headers });
+      return redirect(next, { headers });
     }
   }
 
