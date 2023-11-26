@@ -5,6 +5,9 @@
 ## How do I build this ?
 Video soon on my [YTChannel](https://www.youtube.com/@raj_talks_tech/videos)
 
+## Want to participate and contribute ?
+Come chat with us on https://discord.com/channels/1121796870231040020/1177666400047874269
+
 
 ## Sneak-peek
 
