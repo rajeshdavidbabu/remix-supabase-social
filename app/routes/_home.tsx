@@ -1,8 +1,14 @@
 import { HamburgerMenuIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { redirect } from "@remix-run/node";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import {
+  useLoaderData,
+  Outlet,
+  useOutletContext,
+  Link,
+} from "@remix-run/react";
 import { Logout } from "~/routes/stateful/logout";
+import type { SupabaseOutletContext } from "~/lib/supabase";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { getUserDataFromSession } from "~/lib/utils";
 import { useState } from "react";
@@ -29,6 +35,7 @@ export default function Index() {
   const {
     userDetails: { userAvatarUrl, username },
   } = useLoaderData<typeof loader>();
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
   const [isNavOpen, setNavOpen] = useState(false);
 
   return (
@@ -65,6 +72,7 @@ export default function Index() {
           <Logout />
         </div>
       </nav>
+      <Outlet context={{ supabase }} />
     </div>
   );
 }

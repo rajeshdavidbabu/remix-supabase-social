@@ -11,7 +11,7 @@ export function AppLogo({ className }: { className: string }) {
         stroke="#000000" // Set the stroke color if needed, or use currentColor to inherit from parent
         strokeWidth={"8px"}
         fill="inherit"
-        fillRule="evenodd"
+        fill-rule="evenodd"
       />
     </svg>
   );
