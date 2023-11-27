@@ -26,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, headers } = await getSupabaseWithSessionHeaders({
     request,
   });
-  const domainUrl = process.env.SUPABASE_URL!;
+  const domainUrl = process.env.DOMAIN_URL!;
 
   return json({ env: getSupabaseEnv(), session, domainUrl }, { headers });
 };
