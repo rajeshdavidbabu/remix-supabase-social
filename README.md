@@ -2,6 +2,14 @@
 
 - A social platform app built using Remix and Supabase.
 
+## Demo
+
+
+
+https://github.com/rajeshdavidbabu/remix-supabase-social/assets/15684795/1fcdaff5-0715-4cfe-9820-d5dfeed270a7
+
+
+
 ## Motivation
 
 x.com is a noisy social-media app and I want to try building an actual social-media platform for coders.
@@ -31,12 +39,6 @@ From your terminal:
 npm install
 npm run dev
 ```
-
-## Demo
-
-<img width="1429" alt="Screenshot 2023-11-24 at 18 33 19" src="https://github.com/rajeshdavidbabu/remix-supabase-social/assets/15684795/c750165f-ec64-4b75-b6fd-f9cc0d09a20a">
-
-<img width="1033" alt="Screenshot 2023-11-24 at 17 55 38" src="https://github.com/rajeshdavidbabu/remix-supabase-social/assets/15684795/3f8faa1c-bf9a-4818-beb4-d101a67131ef">
 
 ## Roadmap
 
