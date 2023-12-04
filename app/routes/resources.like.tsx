@@ -65,20 +65,11 @@ type LikeProps = {
   likes: number;
   postId: string;
   sessionUserId: string;
-  readonly?: boolean;
-  revalidateCurrentPage?: () => void;
 };
 
-export function Like({
-  likedByUser,
-  likes,
-  postId,
-  sessionUserId,
-  readonly,
-}: LikeProps) {
+export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
   const { toast } = useToast();
   const fetcher = useFetcher<typeof action>();
-  // const data = useRouteLoaderData("routes/_home+/gitposts.$postId");
 
   const inFlightAction = fetcher.formData?.get("action");
   const isLoading = fetcher.state !== "idle";

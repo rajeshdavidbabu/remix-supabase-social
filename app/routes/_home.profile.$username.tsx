@@ -10,7 +10,6 @@ import { Separator } from "~/components/ui/separator";
 import { getPostsForUser, getProfileForUsername } from "~/lib/database.server";
 import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
 import { combinePostsWithLikes } from "~/lib/utils";
-import { useEffect } from "react";
 
 export let loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { username } = params;
@@ -75,12 +74,6 @@ export default function Profile() {
     posts,
     totalPages,
   } = useLoaderData<typeof loader>();
-
-  useEffect(() => {
-    return () => {
-      console.log("unmounted at profile ");
-    };
-  }, []);
 
   return (
     <div className="flex flex-col w-full max-w-xl px-4 my-2">
