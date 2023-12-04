@@ -53,4 +53,4 @@ Features I would like to add:
 
 ## Want to participate and contribute ?
 
-Come chat with us on https://discord.com/channels/1121796870231040020/1177666400047874269
+Come chat with us on https://discord.gg/Ye9dsJzNPj
