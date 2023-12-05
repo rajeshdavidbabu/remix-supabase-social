@@ -25,7 +25,7 @@ x.com is a noisy social-media app and I want to try building an actual social-me
 
 ## How do I build this ?
 
-Video soon on my [YTChannel](https://www.youtube.com/@raj_talks_tech/videos)
+Checkout the video -> [YTVideo](https://www.youtube.com/watch?v=ocWc_FFc5jE)
 
 ## Getting Started
 
