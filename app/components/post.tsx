@@ -3,6 +3,7 @@ import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import ReactMarkdown from "react-markdown";
 import { AppLogo } from "./app-logo";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 
 export type PostProps = {
   avatarUrl: string;
@@ -52,24 +53,20 @@ export function Post({
           <div className="p-4 md:p-8 w-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <img
-                  alt="Profile"
-                  className="rounded-full"
-                  height="40"
-                  src={avatarUrl}
-                  style={{
-                    aspectRatio: "40/40",
-                    objectFit: "cover",
-                  }}
-                  width="40"
-                />
+                <Avatar className="w-14 h-14">
+                  <AvatarImage
+                    className="rounded-full"
+                    alt="User avatar"
+                    src={avatarUrl}
+                  ></AvatarImage>
+                </Avatar>
                 <div className="ml-4">
-                  <div className="text-sm md:text-lg text-black font-semibold">
+                  <div className="text-sm md:text-lg font-semibold">
                     <Link prefetch="intent" to={`/profile/${username}`}>
                       {name}
                     </Link>
                   </div>
-                  <div className="text-gray-400 text-sm md:text-md">
+                  <div className="text-muted-foreground text-sm md:text-md">
                     <Link prefetch="intent" to={`/profile/${username}`}>
                       @{username}
                     </Link>
@@ -78,12 +75,14 @@ export function Post({
               </div>
               <AppLogo className="h-8 w-8" />
             </div>
-            <div className="mt-4 text-gray-500 text-sm prose">
+            <div className="mt-4 text-sm prose dark:prose-invert prose-pre:border max-w-full">
               <ReactMarkdown>{title}</ReactMarkdown>
             </div>
             <div className="flex mt-6 justify-between items-center">
-              <div className="flex space-x-4 text-gray-400">{children}</div>
-              <div className="text-gray-400 text-sm">{dateTimeString}</div>
+              <div className="flex space-x-4">{children}</div>
+              <div className="text-muted-foreground text-sm">
+                {dateTimeString}
+              </div>
             </div>
           </div>
         </div>

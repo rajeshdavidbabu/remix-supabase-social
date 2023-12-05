@@ -19,6 +19,14 @@ import {
 } from "./lib/supabase.server";
 import { useSupabase } from "./lib/supabase";
 import { Toaster } from "./components/ui/toaster";
+import {
+  getHints,
+  ClientHintCheck,
+  useTheme,
+  useNonce,
+} from "./lib/client-hints";
+import { getTheme } from "./lib/theme.server";
+import clsx from "clsx";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -28,17 +36,33 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
   const domainUrl = process.env.DOMAIN_URL!;
 
-  return json({ env: getSupabaseEnv(), session, domainUrl }, { headers });
+  return json(
+    {
+      env: getSupabaseEnv(),
+      session,
+      domainUrl,
+      requestInfo: {
+        hints: getHints(request),
+        userPrefs: {
+          theme: getTheme(request),
+        },
+      },
+    },
+    { headers }
+  );
 };
 
 export default function App() {
   const { env, session, domainUrl } = useLoaderData<typeof loader>();
 
   const { supabase } = useSupabase({ env, session });
+  const theme = useTheme();
+  const nonce = useNonce();
 
   return (
-    <html lang="en">
+    <html lang="en" className={clsx(theme)}>
       <head>
+        <ClientHintCheck nonce={nonce} />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />

@@ -24,11 +24,13 @@ export function ViewLikes({
         {likedByUser ? (
           <Star className={`w-4 h-4 text-blue-700 group-hover:text-blue-400`} />
         ) : (
-          <Star className={`w-4 h-4 text-gray-500 group-hover:text-blue-400`} />
+          <Star
+            className={`w-4 h-4 text-muted-foreground group-hover:text-blue-400`}
+          />
         )}
         <span
           className={`ml-2 text-sm group-hover:text-blue-400
-          ${likedByUser ? "text-blue-700" : "text-gray-500"}`}
+          ${likedByUser ? "text-blue-700" : "text-muted-foreground"}`}
         >
           {likes}
         </span>
