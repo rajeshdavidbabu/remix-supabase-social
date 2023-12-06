@@ -60,7 +60,7 @@ export default function Index() {
           <Link prefetch="intent" to={`/profile/${username}`}>
             @{username}
           </Link>
-          <Avatar className="w-14 h-14">
+          <Avatar className="w-12 h-12">
             <AvatarImage
               className="rounded-full"
               alt="User avatar"

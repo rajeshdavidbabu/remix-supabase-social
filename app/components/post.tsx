@@ -53,7 +53,7 @@ export function Post({
           <div className="p-4 md:p-8 w-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Avatar className="w-14 h-14">
+                <Avatar className="w-12 h-12">
                   <AvatarImage
                     className="rounded-full"
                     alt="User avatar"
