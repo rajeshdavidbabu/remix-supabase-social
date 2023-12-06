@@ -47,7 +47,7 @@ npm run dev
 ## Roadmap
 
 Features I would like to add:
-- Adding dark-mode using Kent's latest client-hints library
+- Adding dark-mode using Kent's latest client-hints library ✅
 - Adding notifications for "new posts" and when clicked users need to be scrolled to top
 - Adding support for uploading images, preferably using S3
 
