@@ -69,8 +69,6 @@ export function InfiniteVirtualList({
     <div>
       {showNewPosts ? (
         <Button
-          variant="outline"
-          size="icon"
           className="sticky top-24 left-1/2 transform -translate-x-1/2 z-10"
           onClick={() => {
             setShowNewPosts(false);
@@ -79,7 +77,8 @@ export function InfiniteVirtualList({
             revalidator.revalidate();
           }}
         >
-          <BellPlus size={24} />
+          <BellPlus size={24} className="mr-2" />
+          New Posts
         </Button>
       ) : null}
       <Virtuoso
