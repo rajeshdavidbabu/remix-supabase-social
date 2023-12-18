@@ -7,6 +7,7 @@ import { useRevalidator, useRouteLoaderData } from "@remix-run/react";
 import * as React from "react";
 import type { loader as rootLoader } from "~/root";
 import type { SerializeFrom } from "@remix-run/node";
+import { useOptimisticTheme } from "~/routes/resources.theme-toggle";
 
 const hintsUtils = getHintUtils({
   theme: colorSchemeHint,
@@ -49,6 +50,10 @@ export function ClientHintCheck({ nonce }: { nonce: string }) {
 export function useTheme() {
   const hints = useHints();
   const requestInfo = useRequestInfo();
+  const optimisticTheme = useOptimisticTheme();
+  if (optimisticTheme) {
+    return optimisticTheme === "system" ? hints.theme : optimisticTheme;
+  }
   return requestInfo.userPrefs.theme ?? hints.theme;
 }
 

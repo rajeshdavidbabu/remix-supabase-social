@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useFetchers } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { setTheme } from "~/lib/theme.server";
@@ -46,6 +46,21 @@ export const action: ActionFunction = async ({ request }) => {
     }
   );
 };
+
+export function useOptimisticTheme(): Theme | null {
+  const fetchers = useFetchers();
+  const themeFetcher = fetchers.find(
+    (f) => f.formAction === "/resources/theme-toggle"
+  );
+
+  const optimisticTheme = themeFetcher?.formData?.get("theme");
+
+  if (optimisticTheme && isTheme(optimisticTheme)) {
+    return optimisticTheme;
+  }
+
+  return null;
+}
 
 export function ThemeToggle() {
   const fetcher = useFetcher();
