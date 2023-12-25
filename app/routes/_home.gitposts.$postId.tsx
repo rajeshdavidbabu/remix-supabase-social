@@ -22,6 +22,7 @@ import {
 } from "~/lib/utils";
 import { Like } from "~/routes/resources.like";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm"
 import { AppLogo } from "~/components/app-logo";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 
@@ -156,7 +157,7 @@ const Comment = ({ avatarUrl, username, title }: CommentProps) => {
         </div>
       </div>
       <div className="text-sm prose py-4 dark:prose-invert prose-pre:border w-full">
-        <ReactMarkdown>{title}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{title}</ReactMarkdown>
       </div>
     </div>
   );

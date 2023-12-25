@@ -2,6 +2,7 @@ import { Link } from "@remix-run/react";
 import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm"
 import { AppLogo } from "./app-logo";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 
@@ -76,7 +77,7 @@ export function Post({
               <AppLogo className="h-8 w-8" />
             </div>
             <div className="mt-4 text-sm prose dark:prose-invert prose-pre:border max-w-full">
-              <ReactMarkdown>{title}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{title}</ReactMarkdown>
             </div>
             <div className="flex mt-6 justify-between items-center">
               <div className="flex space-x-4">{children}</div>
