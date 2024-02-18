@@ -1,11 +1,15 @@
-import { Link } from "@remix-run/react";
-import { AppLogo } from "~/components/app-logo";
-import { Card, CardContent } from "~/components/ui/card";
-import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Login as GithubLogin } from "./stateful/login";
-import { ThemeToggle } from "./resources.theme-toggle";
+import { Link } from '@remix-run/react';
+import { AppLogo } from '~/components/app-logo';
+import { Card, CardContent } from '~/components/ui/card';
+import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
+import { Login as GithubLogin } from './stateful/oauth-login';
+import { ThemeToggle } from './resources.theme-toggle';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import { AuthForm } from '~/routes/stateful/auth-form';
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, session } = await getSupabaseWithSessionHeaders({
@@ -13,7 +17,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   if (session) {
-    return redirect("/gitposts", { headers });
+    return redirect('/gitposts', { headers });
   }
 
   return json({ success: true }, { headers });
@@ -29,26 +33,38 @@ export default function Login() {
         </Link>
         <ThemeToggle />
       </nav>
-      <div className="container flex flex-col justify-start items-center px-4 md:px-6 flex-1 mt-24">
-        <div className="flex flex-col items-center space-y-4 text-center p-4">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
-            Login in using <br />
-            <span className="px-1 font-extrabold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-300% animate-gradient">
-              Github
-            </span>{" "}
-            <br />
-            and discover more
-          </h1>
 
-          <p className="text-gray-500 mt-2">
-            Our posts and comments are powered by Markdown
-          </p>
+      <div className="flex items-center justify-center flex-1 w-full">
+        <div className="h-full flex-col bg-muted rounded-md m-8 p-4 w-1/2 hidden md:flex max-w-sm">
+          <div className="flex flex-col items-center space-y-4 text-center p-4">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
+              <span className="px-1 font-extrabold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-300% animate-gradient">
+                Login
+              </span>{' '}
+              and discover more
+            </h1>
+
+            <p className="text-gray-500 mt-2">
+              Our posts and comments are powered by Markdown
+            </p>
+          </div>
         </div>
-        <Card className="relative group overflow-hidden rounded-lg">
-          <CardContent className="p-1 bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 bg-300% animate-gradient">
-            <GithubLogin />
-          </CardContent>
-        </Card>
+        <div className="m-8 w-full md:w-1/2 p-4 grid gap-4 max-w-sm">
+          <GithubLogin />
+          <div className="grid gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <AuthForm />
+          </div>
+        </div>
       </div>
     </section>
   );

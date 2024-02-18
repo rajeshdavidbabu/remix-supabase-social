@@ -2,7 +2,7 @@ import {
   json,
   type LinksFunction,
   type LoaderFunctionArgs,
-} from "@remix-run/node";
+} from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -11,24 +11,25 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-} from "@remix-run/react";
-import styles from "~/tailwind.css";
+} from '@remix-run/react';
+import styles from '~/tailwind.css';
 import {
   getSupabaseEnv,
   getSupabaseWithSessionHeaders,
-} from "./lib/supabase.server";
-import { useSupabase } from "./lib/supabase";
-import { Toaster } from "./components/ui/toaster";
+} from './lib/supabase.server';
+import { useSupabase } from './lib/supabase';
+import { Toaster } from './components/ui/toaster';
+import { Toaster as SonnerToaster } from './components/ui/sonner';
 import {
   getHints,
   ClientHintCheck,
   useTheme,
   useNonce,
-} from "./lib/client-hints";
-import { getTheme } from "./lib/theme.server";
-import clsx from "clsx";
+} from './lib/client-hints';
+import { getTheme } from './lib/theme.server';
+import clsx from 'clsx';
 
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, headers } = await getSupabaseWithSessionHeaders({
@@ -70,6 +71,7 @@ export default function App() {
       </head>
       <body className="overscroll-none">
         <Toaster />
+        <SonnerToaster position="top-center" richColors />
         <Outlet context={{ supabase, domainUrl }} />
         <ScrollRestoration />
         <Scripts />
