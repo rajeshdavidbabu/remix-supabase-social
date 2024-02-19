@@ -1,5 +1,5 @@
-import { createServerClient, parse, serialize } from "@supabase/ssr";
-import type { Database } from "database.types";
+import { createServerClient, parse, serialize } from '@supabase/ssr';
+import type { Database } from 'database.types';
 
 export const getSupabaseEnv = () => ({
   SUPABASE_URL: process.env.SUPABASE_URL!,
@@ -7,7 +7,7 @@ export const getSupabaseEnv = () => ({
 });
 
 export function getSupabaseWithHeaders({ request }: { request: Request }) {
-  const cookies = parse(request.headers.get("Cookie") ?? "");
+  const cookies = parse(request.headers.get('Cookie') ?? '');
   const headers = new Headers();
 
   const supabase = createServerClient<Database>(
@@ -19,11 +19,15 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
           return cookies[key];
         },
         set(key, value, options) {
-          headers.append("Set-Cookie", serialize(key, value, options));
+          headers.append('Set-Cookie', serialize(key, value, options));
         },
         remove(key, options) {
-          headers.append("Set-Cookie", serialize(key, "", options));
+          headers.append('Set-Cookie', serialize(key, '', options));
         },
+      },
+      auth: {
+        detectSessionInUrl: true,
+        flowType: 'pkce',
       },
     }
   );

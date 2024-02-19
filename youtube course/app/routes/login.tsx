@@ -1,12 +1,12 @@
-import { Link, useOutletContext } from "@remix-run/react";
-import { AppLogo } from "~/components/app-logo";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { Github } from "lucide-react";
-import type { SupabaseOutletContext } from "~/lib/supabase";
-import { getSupabaseWithSessionAndHeaders } from "~/lib/supabase.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { Link, useOutletContext } from '@remix-run/react';
+import { AppLogo } from '~/components/app-logo';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Github } from 'lucide-react';
+import type { SupabaseOutletContext } from '~/lib/supabase';
+import { getSupabaseWithSessionAndHeaders } from '~/lib/supabase.server';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionAndHeaders({
@@ -14,7 +14,7 @@ export let loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   if (serverSession) {
-    return redirect("/gitposts", { headers });
+    return redirect('/gitposts', { headers });
   }
 
   return json({ success: true }, { headers });
@@ -25,7 +25,7 @@ export default function Login() {
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
-      provider: "github",
+      provider: 'github',
       options: {
         redirectTo: `${domainUrl}/resources/auth/callback`,
       },
@@ -46,7 +46,7 @@ export default function Login() {
             Login in using <br />
             <span className="px-1 font-extrabold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-300% animate-gradient">
               Github
-            </span>{" "}
+            </span>{' '}
             <br />
             and discover more
           </h1>

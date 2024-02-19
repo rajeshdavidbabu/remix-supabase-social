@@ -30,6 +30,8 @@ export function AuthForm() {
       password,
     });
 
+    console.log('Sign in ', data, error);
+
     if (error) {
       // Show error toast
       toast.error(error?.message || 'An unknown error occured during login');

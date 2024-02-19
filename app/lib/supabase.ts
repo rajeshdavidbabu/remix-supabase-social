@@ -1,8 +1,8 @@
-import { createBrowserClient } from "@supabase/ssr";
-import type { Session, SupabaseClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import type { Database } from "database.types";
-import { useRevalidator } from "@remix-run/react";
+import { createBrowserClient } from '@supabase/ssr';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+import type { Database } from 'database.types';
+import { useRevalidator } from '@remix-run/react';
 
 export type TypedSupabaseClient = SupabaseClient<Database>;
 
@@ -34,6 +34,8 @@ export const useSupabase = ({ env, session }: UseSupabase) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event happened: ', event, session);
+
       if (session?.access_token !== serverAccessToken) {
         // call loaders
         revalidator.revalidate();
@@ -53,13 +55,13 @@ export function getRealTimeSubscription(
   callback: () => void
 ) {
   return supabase
-    .channel("realtime posts and likes")
+    .channel('realtime posts and likes')
     .on(
-      "postgres_changes",
+      'postgres_changes',
       {
-        event: "INSERT",
-        schema: "public",
-        table: "posts",
+        event: 'INSERT',
+        schema: 'public',
+        table: 'posts',
       },
       () => {
         callback();

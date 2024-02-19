@@ -1,19 +1,21 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
-import { Link } from "@remix-run/react";
-import { AppLogo } from "~/components/app-logo";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { getSupabaseWithSessionHeaders } from "~/lib/supabase.server";
-import { ThemeToggle } from "./resources.theme-toggle";
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import { redirect, json } from '@remix-run/node';
+import { Link } from '@remix-run/react';
+import { AppLogo } from '~/components/app-logo';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+import { ThemeToggle } from './resources.theme-toggle';
 
 export let loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, session } = await getSupabaseWithSessionHeaders({
     request,
   });
 
+  console.log('Session: ', session);
+
   if (session) {
-    return redirect("/gitposts", { headers });
+    return redirect('/gitposts', { headers });
   }
 
   return json({ success: true }, { headers });
@@ -32,16 +34,16 @@ export default function Index() {
       <div className="container md:flex justify-center items-center px-4 md:px-6 flex-1">
         <div className="flex flex-col items-center space-y-4 text-center p-4 md:w-1/2">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
-            A{" "}
+            A{' '}
             <span className="font-extrabold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-300% animate-gradient">
               Community-Driven
-            </span>{" "}
+            </span>{' '}
             Minimalist Social Platform for Coders
           </h1>
 
           <p className="text-muted-foreground mt-2">
-            Powered by{" "}
-            <span className="text-blue-700 font-bold mt-2">Remix</span> and{" "}
+            Powered by{' '}
+            <span className="text-blue-700 font-bold mt-2">Remix</span> and{' '}
             <span className="text-green-700 font-bold mt-2">Supabase</span>
           </p>
 
